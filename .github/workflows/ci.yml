@@ -1,0 +1,54 @@
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ${{ matrix.so }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        so: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: "testes"
+        run: dotnet test testes/ArranhaCeus.Testes/ArranhaCeus.Testes.csproj -c Release --nologo -v q --filter "Category!=Pesado"
+
+      - name: "quantos predios se veem de uma ponta, contra os numeros de Stirling"
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- stirling
+
+      - name: "quantas grades as pistas completas determinam sozinhas"
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- unicas
+
+      - name: "o menor numero de pistas que decide cada grade 4 por 4"
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- minimo
+
+      - name: "o solucionador contra a forca bruta em todas as pistas completas"
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- juiz
+
+      - name: "uma grade 5 por 5 com as pistas em volta"
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- desenho
+
+  pesado:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: "os 102.398 conjuntos de pistas de ordem 5, presos em teste"
+        run: dotnet test testes/ArranhaCeus.Testes/ArranhaCeus.Testes.csproj -c Release --nologo -v q --filter "Category=Pesado"
